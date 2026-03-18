@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FisioPrep SCS 2025 | 540 Preguntas Oficiales</title>
+    <title>FisioPrep SCS 2025 | Carpeta de Errores Activa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
@@ -30,8 +30,8 @@
           <button onclick="showTab('all')" id="btn-all" class="tab-active py-5 transition-all">Banco</button>
           <button onclick="showTab('themes')" id="btn-themes" class="py-5 transition-all">Temas</button>
           <button onclick="showTab('sim')" id="btn-sim" class="py-5 transition-all">Simulador</button>
-          <button onclick="showTab('repaso')" id="btn-repaso" class="py-5 transition-all text-orange-400 font-black">
-            <i class="fas fa-graduation-cap mr-1"></i> Repaso
+          <button onclick="showTab('errors')" id="btn-errors" class="py-5 transition-all text-red-400">
+            <i class="fas fa-folder-open mr-1"></i> Errores
           </button>
         </div>
       </div>
@@ -42,7 +42,7 @@
         <div class="mb-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
           <div>
             <h2 class="text-4xl font-black text-white">Repertorio Oficial</h2>
-            <p class="text-emerald-500 font-bold">540 preguntas definitivas del SCS (BOC 2025)</p>
+            <p class="text-emerald-500 font-bold">540 preguntas (BOC 2025)</p>
           </div>
           <div class="relative w-full md:w-96">
             <i class="fas fa-search absolute left-4 top-4 text-slate-500"></i>
@@ -53,10 +53,6 @@
       </section>
 
       <section id="view-themes" class="hidden">
-        <div class="text-center mb-12">
-          <h2 class="text-4xl font-black text-white mb-2">Especialidades</h2>
-          <p class="text-slate-400">Estudio dirigido por bloques de contenido</p>
-        </div>
         <div id="theme-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"></div>
         <div id="theme-questions" class="space-y-6"></div>
       </section>
@@ -65,50 +61,35 @@
         <div id="sim-intro" class="text-center py-24 bg-slate-900 rounded-[3rem] border border-emerald-500/10 shadow-2xl">
           <i class="fas fa-stopwatch text-6xl text-emerald-500 mb-8 animate-pulse"></i>
           <h2 class="text-4xl font-black text-white mb-4">Simulador de Examen</h2>
-          <p class="text-slate-400 mb-10 max-w-md mx-auto">20 preguntas aleatorias del total de 540.</p>
-          <button onclick="startSim()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-16 py-5 rounded-2xl transition transform hover:scale-105 shadow-lg tracking-tighter">COMENZAR EXAMEN</button>
+          <button onclick="startSim()" class="bg-emerald-500 text-slate-950 font-black px-16 py-5 rounded-2xl shadow-lg">COMENZAR EXAMEN</button>
         </div>
         <div id="sim-engine" class="hidden">
-          <div class="flex justify-between items-center bg-slate-900 p-5 rounded-t-3xl border border-slate-800">
-            <div class="flex items-center gap-3">
-              <span class="bg-emerald-500 text-slate-950 w-8 h-8 rounded-full flex items-center justify-center font-bold" id="sim-num">1</span>
-              <span id="sim-progress" class="font-bold text-white text-sm uppercase tracking-widest">Pregunta 1 de 20</span>
-            </div>
-            <div class="text-right">
-              <span id="sim-score" class="text-emerald-400 text-xl font-black">0</span>
-              <div class="text-[9px] uppercase text-slate-500 font-bold">Aciertos</div>
-            </div>
-          </div>
-          <div id="sim-question-container" class="bg-slate-900 border border-slate-800 p-10 rounded-b-3xl shadow-2xl"></div>
-          <div class="flex justify-between items-center mt-8">
-            <button onclick="stopSim()" class="text-slate-500 hover:text-red-400 font-bold text-xs uppercase tracking-widest transition-colors">Abandonar</button>
-            <button id="btn-next" onclick="nextSimQuestion()" class="hidden bg-emerald-500 text-slate-950 px-10 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-3">SIGUIENTE <i class="fas fa-arrow-right"></i></button>
+          <div id="sim-num-display" class="mb-4 text-emerald-500 font-bold uppercase tracking-widest">Pregunta 1 de 20</div>
+          <div id="sim-question-container"></div>
+          <div class="flex justify-between mt-8">
+            <button onclick="stopSim()" class="text-slate-500 font-bold uppercase">Abandonar</button>
+            <button id="btn-next" onclick="nextSimQuestion()" class="hidden bg-emerald-500 text-slate-950 px-10 py-3 rounded-xl font-bold">SIGUIENTE</button>
           </div>
         </div>
-        <div id="sim-results" class="hidden text-center py-16 bg-slate-900 rounded-[3rem] border border-emerald-500/20 shadow-2xl">
-          <i class="fas fa-trophy text-6xl text-yellow-500 mb-6 animate-bounce"></i>
-          <h2 class="text-3xl font-black text-white mb-2">¡Examen Finalizado!</h2>
-          <div class="text-5xl font-black text-emerald-500 my-8" id="final-score">0/20</div>
-          <p class="text-slate-200 mb-10 max-w-xs mx-auto font-medium" id="final-msg"></p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center px-8">
-            <button onclick="startSim()" class="bg-emerald-500 text-slate-950 font-black px-10 py-4 rounded-2xl transition transform hover:scale-105 shadow-lg">REPETIR</button>
-            <button onclick="stopSim()" class="bg-slate-800 text-white font-black px-10 py-4 rounded-2xl transition border border-slate-600">INICIO</button>
-          </div>
+        <div id="sim-results" class="hidden text-center py-16 bg-slate-900 rounded-[3rem]">
+            <h2 class="text-3xl font-black text-white mb-8">Examen Finalizado</h2>
+            <div id="final-score" class="text-6xl font-black text-emerald-500 mb-8"></div>
+            <button onclick="startSim()" class="bg-emerald-500 text-slate-950 font-black px-10 py-4 rounded-xl">Repetir</button>
         </div>
       </section>
 
-      <section id="view-repaso" class="hidden">
-        <div class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
+      <section id="view-errors" class="hidden">
+        <div class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6 border-b border-red-500/20 pb-8">
           <div>
-            <h2 class="text-4xl font-black text-white">Mi Carpeta de Errores</h2>
-            <p class="text-orange-500 font-bold">Preguntas para repasar a conciencia</p>
+            <h2 class="text-4xl font-black text-white italic">Carpeta de Errores</h2>
+            <p class="text-red-400 font-bold">Estas son las preguntas que has fallado. ¡Repásalas!</p>
           </div>
-          <button onclick="clearFailed()" class="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 px-6 py-3 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest">
+          <button onclick="clearErrorHistory()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl transition-all text-xs uppercase tracking-widest">
             <i class="fas fa-trash-alt mr-2"></i> Vaciar Carpeta
           </button>
         </div>
-        <div id="repaso-list" class="space-y-6">
-            </div>
+        <div id="error-list" class="space-y-6">
+          </div>
       </section>
     </main>
 
@@ -7377,30 +7358,35 @@
             'Identificar amenazas externas permite a la organización prepararse o mitigarlas.'
         }
       ]
-// 2. VARIABLES GLOBALES
-      let simQuestions = [];
-      let currentSimIdx = 0;
-      let score = 0;
-      // Cargar errores guardados del navegador
-      let failedQuestionIds = JSON.parse(localStorage.getItem('failedPhysioDB')) || [];
+// 2. SISTEMA DE CARPETA DE ERRORES (Local Storage)
+      let errorFolder = JSON.parse(localStorage.getItem('fisioErrors')) || [];
 
-      // 3. FUNCIONES DE NAVEGACIÓN
-      function showTab(tab) {
-        document.querySelectorAll('section').forEach((s) => s.classList.add('hidden'));
-        document.querySelectorAll('nav button').forEach((b) => b.classList.remove('tab-active'));
-        document.getElementById(`view-${tab}`).classList.remove('hidden');
-        document.getElementById(`btn-${tab}`).classList.add('tab-active');
-        
-        if (tab === 'all') renderFullList();
-        if (tab === 'themes') renderThemeGrid();
-        if (tab === 'sim') stopSim();
-        if (tab === 'repaso') renderRepaso();
+      function saveError(id) {
+        if (!errorFolder.includes(id)) {
+          errorFolder.push(id);
+          localStorage.setItem('fisioErrors', JSON.stringify(errorFolder));
+        }
       }
 
-      // 4. GENERADOR DE TARJETAS
-      function createQuestionCard(q, isSim = false) {
+      function removeFromErrors(id) {
+        errorFolder = errorFolder.filter(eId => eId !== id);
+        localStorage.setItem('fisioErrors', JSON.stringify(errorFolder));
+        renderErrors(); // Refrescar la vista
+      }
+
+      function clearErrorHistory() {
+        if(confirm("¿Seguro que quieres borrar todas tus preguntas falladas?")) {
+            errorFolder = [];
+            localStorage.setItem('fisioErrors', JSON.stringify(errorFolder));
+            renderErrors();
+        }
+      }
+
+      // 3. GENERADOR DE TARJETAS
+      function createQuestionCard(q, isSim = false, isErrorView = false) {
         return `
-          <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] space-y-6 shadow-xl card-zoom transition-all duration-300">
+          <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] space-y-6 shadow-xl card-zoom transition-all relative">
+            ${isErrorView ? `<button onclick="removeFromErrors(${q.id})" class="absolute top-6 right-6 text-red-500 hover:text-white transition-colors text-xs font-bold uppercase bg-red-500/10 px-3 py-1 rounded-lg">Borrar de carpeta <i class="fas fa-times ml-1"></i></button>` : ''}
             <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
               <span class="bg-emerald-500/10 text-emerald-500 px-4 py-1.5 rounded-full border border-emerald-500/10">${q.theme}</span>
               <span class="text-slate-600 font-mono">ID #${q.id}</span>
@@ -7409,7 +7395,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               ${q.options.map((opt, i) => `
                 <button onclick="handleResponse(this, ${i}, ${q.id}, ${isSim})" 
-                        class="opt-btn text-left p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 transition-all flex gap-4 group">
+                  class="opt-btn text-left p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 transition-all flex gap-4 group">
                   <span class="bg-slate-900 w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 font-black shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-900 transition-colors">${String.fromCharCode(65 + i)}</span>
                   <span class="text-sm font-medium leading-normal flex-1">${opt}</span>
                 </button>
@@ -7422,71 +7408,90 @@
           </div>`;
       }
 
-      // 5. LÓGICA DE CORRECCIÓN
+      // 4. LÓGICA DE RESPUESTA
       function handleResponse(btn, selectedIdx, qId, isSim) {
-        const qData = database.find((item) => item.id === qId);
+        const qData = database.find(item => item.id === qId);
         const container = btn.closest('.bg-slate-900');
         const allBtns = container.querySelectorAll('.opt-btn');
         const explanationDiv = container.querySelector('.explanation');
         const explanationText = container.querySelector('.explanation-text');
 
-        allBtns.forEach((b) => (b.disabled = true));
+        allBtns.forEach(b => b.disabled = true);
 
         if (selectedIdx === qData.correct) {
           btn.classList.add('correct');
-          if (isSim) {
-            score++;
-            document.getElementById('sim-score').innerText = score;
-          }
+          if (isSim) score++;
         } else {
           btn.classList.add('incorrect');
           allBtns[qData.correct].classList.add('correct');
-          
-          // GUARDAR EN CARPETA DE REPASO SI ES INCORRECTA
-          saveToRepaso(qId);
+          // GUARDAR FALLO
+          saveError(qId);
         }
 
-        explanationText.innerHTML = `<strong class="not-italic uppercase tracking-tighter mr-2 font-black text-[10px] text-emerald-500">Explicación:</strong> ${qData.reason}`;
+        explanationText.innerHTML = `<strong class="uppercase font-black text-emerald-500">Explicación:</strong> ${qData.reason}`;
         explanationDiv.classList.remove('hidden');
         if (isSim) document.getElementById('btn-next').classList.remove('hidden');
       }
 
-      // 6. FUNCIONES DE CARPETA DE ERRORES
-      function saveToRepaso(id) {
-        if (!failedQuestionIds.includes(id)) {
-            failedQuestionIds.push(id);
-            localStorage.setItem('failedPhysioDB', JSON.stringify(failedQuestionIds));
-        }
+      // 5. NAVEGACIÓN Y VISTAS
+      function showTab(tab) {
+        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
+        document.getElementById(`view-${tab}`).classList.remove('hidden');
+        document.getElementById(`btn-${tab}`).classList.add('tab-active');
+        
+        if (tab === 'all') renderFullList();
+        if (tab === 'themes') renderThemeGrid();
+        if (tab === 'errors') renderErrors();
       }
 
-      function renderRepaso() {
-        const list = document.getElementById('repaso-list');
-        if (failedQuestionIds.length === 0) {
-            list.innerHTML = `
-                <div class="text-center py-20 bg-slate-900/50 rounded-[3rem] border border-slate-800">
-                    <i class="fas fa-check-circle text-5xl text-emerald-500 mb-4"></i>
-                    <h3 class="text-2xl font-bold text-white">¡Carpeta vacía!</h3>
-                    <p class="text-slate-500">No tienes preguntas pendientes de repaso. ¡Sigue así!</p>
+      function renderErrors() {
+        const errorList = document.getElementById('error-list');
+        if (errorFolder.length === 0) {
+            errorList.innerHTML = `
+                <div class="text-center py-20 bg-slate-900 rounded-[3rem] border border-slate-800">
+                    <i class="fas fa-check-circle text-6xl text-emerald-500 mb-4"></i>
+                    <h3 class="text-2xl font-bold">¡Carpeta limpia!</h3>
+                    <p class="text-slate-500 mt-2">No tienes errores acumulados. ¡Sigue estudiando!</p>
                 </div>`;
             return;
         }
-        
-        const failedQuestions = database.filter(q => failedQuestionIds.includes(q.id));
-        list.innerHTML = failedQuestions.map(q => createQuestionCard(q)).join('');
+        const filteredData = database.filter(q => errorFolder.includes(q.id));
+        errorList.innerHTML = filteredData.map(q => createQuestionCard(q, false, true)).join('');
       }
 
-      function clearFailed() {
-        if(confirm('¿Estás seguro de que quieres vaciar tu carpeta de errores?')) {
-            failedQuestionIds = [];
-            localStorage.removeItem('failedPhysioDB');
-            renderRepaso();
-        }
+      // 6. FUNCIONES DEL BANCO (REUTILIZADAS)
+      function renderFullList() {
+        document.getElementById('full-list').innerHTML = database.map(q => createQuestionCard(q)).join('');
       }
 
-      // 7. LÓGICA DEL SIMULADOR (Tu lógica original)
+      function filterAll() {
+        const term = document.getElementById('search').value.toLowerCase();
+        const filtered = database.filter(q => q.q.toLowerCase().includes(term) || q.theme.toLowerCase().includes(term));
+        document.getElementById('full-list').innerHTML = filtered.map(q => createQuestionCard(q)).join('');
+      }
+
+      function renderThemeGrid() {
+        const themes = [...new Set(database.map(q => q.theme))];
+        document.getElementById('theme-grid').innerHTML = themes.map(t => `
+          <button onclick="filterByTheme('${t}')" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500 text-left transition-all">
+            <i class="fas fa-folder text-emerald-500 text-2xl mb-4"></i>
+            <div class="font-black text-white uppercase">${t}</div>
+          </button>`).join('');
+      }
+
+      function filterByTheme(theme) {
+        const filtered = database.filter(q => q.theme === theme);
+        document.getElementById('theme-questions').innerHTML = filtered.map(q => createQuestionCard(q)).join('');
+      }
+
+      // 7. LÓGICA SIMULADOR (SIMPLIFICADA)
+      let simQuestions = [];
+      let currentSimIdx = 0;
+      let score = 0;
+
       function startSim() {
         score = 0; currentSimIdx = 0;
-        document.getElementById('sim-score').innerText = '0';
         simQuestions = [...database].sort(() => 0.5 - Math.random()).slice(0, 20);
         document.getElementById('sim-intro').classList.add('hidden');
         document.getElementById('sim-results').classList.add('hidden');
@@ -7496,8 +7501,7 @@
 
       function updateSimView() {
         const q = simQuestions[currentSimIdx];
-        document.getElementById('sim-num').innerText = currentSimIdx + 1;
-        document.getElementById('sim-progress').innerText = `Pregunta ${currentSimIdx + 1} de 20`;
+        document.getElementById('sim-num-display').innerText = `Pregunta ${currentSimIdx + 1} de 20`;
         document.getElementById('sim-question-container').innerHTML = createQuestionCard(q, true);
         document.getElementById('btn-next').classList.add('hidden');
       }
@@ -7505,49 +7509,16 @@
       function nextSimQuestion() {
         currentSimIdx++;
         if (currentSimIdx < 20) updateSimView();
-        else showFinalResults();
-      }
-
-      function showFinalResults() {
-        document.getElementById('sim-engine').classList.add('hidden');
-        document.getElementById('sim-results').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${score} / 20`;
-        let msg = score >= 18 ? '¡Nivel excelente! Esa plaza es tuya.' : score >= 12 ? 'Buen trabajo, sigue repasando.' : 'Necesitas darle otra vuelta al temario.';
-        document.getElementById('final-msg').innerText = msg;
+        else {
+            document.getElementById('sim-engine').classList.add('hidden');
+            document.getElementById('sim-results').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / 20`;
+        }
       }
 
       function stopSim() {
         document.getElementById('sim-intro').classList.remove('hidden');
         document.getElementById('sim-engine').classList.add('hidden');
-        document.getElementById('sim-results').classList.add('hidden');
-      }
-
-      // 8. OTRAS FUNCIONES (Banco y Filtros)
-      function renderFullList() {
-        document.getElementById('full-list').innerHTML = database.map((q) => createQuestionCard(q)).join('');
-      }
-
-      function filterAll() {
-        const term = document.getElementById('search').value.toLowerCase();
-        const filtered = database.filter((q) => q.q.toLowerCase().includes(term) || q.theme.toLowerCase().includes(term));
-        document.getElementById('full-list').innerHTML = filtered.map((q) => createQuestionCard(q)).join('');
-      }
-
-      function renderThemeGrid() {
-        const themes = {};
-        database.forEach((q) => { if (!themes[q.theme]) themes[q.theme] = []; themes[q.theme].push(q.id); });
-        document.getElementById('theme-grid').innerHTML = Object.keys(themes).map((t) => `
-          <button onclick="filterByTheme('${t}')" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500 transition text-left">
-            <i class="fas fa-folder text-emerald-500 text-2xl mb-4"></i>
-            <div class="font-black text-lg text-white mb-1 uppercase tracking-tighter">${t}</div>
-            <div class="text-[10px] text-slate-500 font-bold uppercase">${themes[t].length} Preguntas</div>
-          </button>`).join('');
-      }
-
-      function filterByTheme(theme) {
-        const filtered = database.filter((q) => q.theme === theme);
-        document.getElementById('theme-questions').innerHTML = filtered.map((q) => createQuestionCard(q)).join('');
-        window.scrollTo({ top: 400, behavior: 'smooth' });
       }
 
       window.onload = () => showTab('all');
