@@ -19,15 +19,16 @@
         border-bottom: 4px solid #10b981;
         color: #10b981;
       }
+      /* Colores de validación forzados */
       .correct {
         background-color: #065f46 !important;
         border-color: #059669 !important;
-        color: white;
+        color: white !important;
       }
       .incorrect {
         background-color: #7f1d1d !important;
         border-color: #dc2626 !important;
-        color: white;
+        color: white !important;
       }
       .explanation-box {
         animation: slideIn 0.3s ease-out;
@@ -109,7 +110,7 @@
               type="text"
               id="search"
               onkeyup="filterAll()"
-              placeholder="Buscar por término (Punción, Bobath...)"
+              placeholder="Buscar término..."
               class="bg-slate-900 border border-slate-700 rounded-2xl pl-12 pr-5 py-3.5 w-full focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-inner"
             />
           </div>
@@ -143,7 +144,7 @@
             Simulador de Examen
           </h2>
           <p class="text-slate-400 mb-10 max-w-md mx-auto">
-            Ponte a prueba con 20 preguntas aleatorias del total de 540.
+            20 preguntas aleatorias del total de 540.
           </p>
           <button
             onclick="startSim()"
@@ -192,9 +193,45 @@
             <button
               id="btn-next"
               onclick="nextSimQuestion()"
-              class="hidden bg-slate-800 hover:bg-slate-700 px-10 py-3 rounded-xl font-bold border border-slate-600 transition-all shadow-lg flex items-center gap-3"
+              class="hidden bg-emerald-500 text-slate-950 px-10 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-3"
             >
-              SIGUIENTE <i class="fas fa-arrow-right text-emerald-500"></i>
+              SIGUIENTE <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="sim-results"
+          class="hidden text-center py-16 bg-slate-900 rounded-[3rem] border border-emerald-500/20 shadow-2xl"
+        >
+          <i
+            class="fas fa-trophy text-6xl text-yellow-500 mb-6 animate-bounce"
+          ></i>
+          <h2 class="text-3xl font-black text-white mb-2">
+            ¡Examen Finalizado!
+          </h2>
+          <div
+            class="text-5xl font-black text-emerald-500 my-8"
+            id="final-score"
+          >
+            0/20
+          </div>
+          <p
+            class="text-slate-200 mb-10 max-w-xs mx-auto font-medium"
+            id="final-msg"
+          ></p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center px-8">
+            <button
+              onclick="startSim()"
+              class="bg-emerald-500 text-slate-950 font-black px-10 py-4 rounded-2xl transition transform hover:scale-105 shadow-lg"
+            >
+              REPETIR
+            </button>
+            <button
+              onclick="stopSim()"
+              class="bg-slate-800 text-white font-black px-10 py-4 rounded-2xl transition border border-slate-600"
+            >
+              INICIO
             </button>
           </div>
         </div>
@@ -202,8 +239,6 @@
     </main>
 
     <script>
-      // BASE DE DATOS (Muestra de las 540 preguntas del PDF)
-      // BLOQUE 1: PREGUNTAS 1-50 (Texto íntegro oficial del SCS)
       const database = [
         {
           id: 1,
@@ -7284,7 +7319,7 @@
           reason: '7 verdaderas, 3 falsas y 2 flotantes a cada lado.'
         },
         {
-          id: 327,
+          id: 527,
           theme: 'Anatomía',
           q: 'El esternón es un hueso de tipo:',
           options: ['Largo.', 'Plano.', 'Irregular.', 'Corto.'],
@@ -7469,21 +7504,12 @@
         }
       ]
 
-      // Mapeo de temas automático basado en la DB
-      const getThemes = () => {
-        const themes = {}
-        database.forEach((q) => {
-          if (!themes[q.theme]) themes[q.theme] = []
-          themes[q.theme].push(q.id)
-        })
-        return themes
-      }
-
-      // LÓGICA DE INTERFAZ
+      // 2. VARIABLES GLOBALES
       let simQuestions = []
       let currentSimIdx = 0
       let score = 0
 
+      // 3. FUNCIONES DE NAVEGACIÓN
       function showTab(tab) {
         document
           .querySelectorAll('section')
@@ -7495,8 +7521,10 @@
         document.getElementById(`btn-${tab}`).classList.add('tab-active')
         if (tab === 'all') renderFullList()
         if (tab === 'themes') renderThemeGrid()
+        if (tab === 'sim') stopSim()
       }
 
+      // 4. GENERADOR DE TARJETAS (LOGICA UNICA)
       function createQuestionCard(q, isSim = false) {
         return `
           <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] space-y-6 shadow-xl card-zoom transition-all duration-300">
@@ -7509,7 +7537,7 @@
               ${q.options
                 .map(
                   (opt, i) => `
-                <button onclick="checkAnswer(this, ${i}, ${q.correct}, '${q.reason.replace(/'/g, "\\'")}', ${isSim})" 
+                <button onclick="handleResponse(this, ${i}, ${q.id}, ${isSim})" 
                         class="opt-btn text-left p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 transition-all flex gap-4 group">
                   <span class="bg-slate-900 w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 font-black shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-900 transition-colors">${String.fromCharCode(65 + i)}</span>
                   <span class="text-sm font-medium leading-normal flex-1">${opt}</span>
@@ -7520,19 +7548,22 @@
             </div>
             <div class="explanation hidden bg-emerald-500/5 text-emerald-300 p-6 rounded-2xl border border-emerald-500/10 text-sm italic explanation-box flex gap-4">
               <i class="fas fa-lightbulb text-emerald-500 mt-1"></i>
-              <div><strong class="not-italic uppercase tracking-tighter mr-2 font-black text-[10px] text-emerald-500">Referencia:</strong> ${q.reason}</div>
+              <div class="explanation-text"></div>
             </div>
-          </div>
-        `
+          </div>`
       }
 
-      function checkAnswer(btn, selected, correct, reason, isSim) {
+      // 5. LÓGICA DE CORRECCIÓN (POR ID - EVITA ERRORES DE TEXTO)
+      function handleResponse(btn, selectedIdx, qId, isSim) {
+        const qData = database.find((item) => item.id === qId)
         const container = btn.closest('.bg-slate-900')
-        const btns = container.querySelectorAll('.opt-btn')
-        const explanation = container.querySelector('.explanation')
+        const allBtns = container.querySelectorAll('.opt-btn')
+        const explanationDiv = container.querySelector('.explanation')
+        const explanationText = container.querySelector('.explanation-text')
 
-        btns.forEach((b) => (b.disabled = true))
-        if (selected === correct) {
+        allBtns.forEach((b) => (b.disabled = true))
+
+        if (selectedIdx === qData.correct) {
           btn.classList.add('correct')
           if (isSim) {
             score++
@@ -7540,13 +7571,65 @@
           }
         } else {
           btn.classList.add('incorrect')
-          btns[correct].classList.add('correct')
+          allBtns[qData.correct].classList.add('correct')
         }
-        explanation.classList.remove('hidden')
+
+        explanationText.innerHTML = `<strong class="not-italic uppercase tracking-tighter mr-2 font-black text-[10px] text-emerald-500">Explicación:</strong> ${qData.reason}`
+        explanationDiv.classList.remove('hidden')
         if (isSim)
           document.getElementById('btn-next').classList.remove('hidden')
       }
 
+      // 6. LÓGICA DEL SIMULADOR
+      function startSim() {
+        score = 0
+        currentSimIdx = 0
+        document.getElementById('sim-score').innerText = '0'
+        simQuestions = [...database]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 20)
+        document.getElementById('sim-intro').classList.add('hidden')
+        document.getElementById('sim-results').classList.add('hidden')
+        document.getElementById('sim-engine').classList.remove('hidden')
+        updateSimView()
+      }
+
+      function updateSimView() {
+        const q = simQuestions[currentSimIdx]
+        document.getElementById('sim-num').innerText = currentSimIdx + 1
+        document.getElementById('sim-progress').innerText =
+          `Pregunta ${currentSimIdx + 1} de 20`
+        document.getElementById('sim-question-container').innerHTML =
+          createQuestionCard(q, true)
+        document.getElementById('btn-next').classList.add('hidden')
+      }
+
+      function nextSimQuestion() {
+        currentSimIdx++
+        if (currentSimIdx < 20) updateSimView()
+        else showFinalResults()
+      }
+
+      function showFinalResults() {
+        document.getElementById('sim-engine').classList.add('hidden')
+        document.getElementById('sim-results').classList.remove('hidden')
+        document.getElementById('final-score').innerText = `${score} / 20`
+        let msg =
+          score >= 18
+            ? '¡Nivel excelente! Esa plaza es tuia.'
+            : score >= 12
+              ? 'Buen trabajo, sigue repasando.'
+              : 'Necesitas darle otra vuelta al temario.'
+        document.getElementById('final-msg').innerText = msg
+      }
+
+      function stopSim() {
+        document.getElementById('sim-intro').classList.remove('hidden')
+        document.getElementById('sim-engine').classList.add('hidden')
+        document.getElementById('sim-results').classList.add('hidden')
+      }
+
+      // 7. FUNCIONES AUXILIARES
       function renderFullList() {
         document.getElementById('full-list').innerHTML = database
           .map((q) => createQuestionCard(q))
@@ -7566,16 +7649,19 @@
       }
 
       function renderThemeGrid() {
-        const themes = getThemes()
+        const themes = {}
+        database.forEach((q) => {
+          if (!themes[q.theme]) themes[q.theme] = []
+          themes[q.theme].push(q.id)
+        })
         document.getElementById('theme-grid').innerHTML = Object.keys(themes)
           .map(
             (t) => `
-          <button onclick="filterByTheme('${t}')" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500 transition group text-left relative overflow-hidden">
+          <button onclick="filterByTheme('${t}')" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500 transition text-left">
             <i class="fas fa-folder text-emerald-500 text-2xl mb-4"></i>
             <div class="font-black text-lg text-white mb-1 uppercase tracking-tighter">${t}</div>
-            <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">${themes[t].length} Preguntas</div>
-          </button>
-        `
+            <div class="text-[10px] text-slate-500 font-bold uppercase">${themes[t].length} Preguntas</div>
+          </button>`
           )
           .join('')
       }
@@ -7586,41 +7672,6 @@
           .map((q) => createQuestionCard(q))
           .join('')
         window.scrollTo({ top: 400, behavior: 'smooth' })
-      }
-
-      function startSim() {
-        score = 0
-        currentSimIdx = 0
-        simQuestions = [...database]
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 20)
-        document.getElementById('sim-intro').classList.add('hidden')
-        document.getElementById('sim-engine').classList.remove('hidden')
-        updateSimView()
-      }
-
-      function updateSimView() {
-        const q = simQuestions[currentSimIdx]
-        document.getElementById('sim-num').innerText = currentSimIdx + 1
-        document.getElementById('sim-progress').innerText =
-          `Pregunta ${currentSimIdx + 1} de 20`
-        document.getElementById('sim-question-container').innerHTML =
-          createQuestionCard(q, true)
-        document.getElementById('btn-next').classList.add('hidden')
-      }
-
-      function nextSimQuestion() {
-        currentSimIdx++
-        if (currentSimIdx < 20) updateSimView()
-        else {
-          alert(`Simulacro completado. Puntuación: ${score} / 20`)
-          stopSim()
-        }
-      }
-
-      function stopSim() {
-        document.getElementById('sim-intro').classList.remove('hidden')
-        document.getElementById('sim-engine').classList.add('hidden')
       }
 
       window.onload = () => showTab('all')
