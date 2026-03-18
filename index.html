@@ -76,14 +76,14 @@
             class="flex bg-slate-950 rounded-xl p-1 border border-slate-700 shadow-inner"
           >
             <button
-              id="user1-btn"
+              id="user-ari-btn"
               onclick="switchUser('ARI')"
               class="px-5 py-1.5 rounded-lg text-xs font-black transition-all border border-transparent mr-1 uppercase"
             >
               ARI
             </button>
             <button
-              id="user2-btn"
+              id="user-gee-btn"
               onclick="switchUser('GEE')"
               class="px-5 py-1.5 rounded-lg text-xs font-black transition-all border border-transparent uppercase"
             >
@@ -98,30 +98,30 @@
           <button
             onclick="showTab('all')"
             id="btn-all"
-            class="tab-active py-5 transition-all"
+            class="tab-active py-5 transition-all text-white"
           >
             Banco
           </button>
           <button
             onclick="showTab('themes')"
             id="btn-themes"
-            class="py-5 transition-all"
+            class="py-5 transition-all text-white"
           >
             Temas
           </button>
           <button
             onclick="showTab('sim')"
             id="btn-sim"
-            class="py-5 transition-all"
+            class="py-5 transition-all text-white"
           >
             Simulador
           </button>
           <button
             onclick="showTab('errors')"
             id="btn-errors"
-            class="py-5 transition-all text-orange-500"
+            class="py-5 transition-all text-orange-400 font-bold uppercase"
           >
-            <i class="fas fa-graduation-cap mr-1"></i> Errores
+            Errores
           </button>
         </div>
       </div>
@@ -130,16 +130,11 @@
     <main class="container mx-auto px-4 py-8">
       <section id="view-all">
         <div
-          class="mb-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6 text-center md:text-left"
+          class="mb-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6"
         >
           <div>
-            <h2 class="text-4xl font-black text-white leading-none mb-2">
-              Repertorio Oficial
-            </h2>
-            <p
-              id="user-welcome"
-              class="text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1 rounded-lg inline-block text-sm"
-            ></p>
+            <h2 class="text-4xl font-black text-white">Repertorio Oficial</h2>
+            <p id="welcome-text" class="text-emerald-500 font-bold italic"></p>
           </div>
           <div class="relative w-full md:w-96">
             <i class="fas fa-search absolute left-4 top-4 text-slate-500"></i>
@@ -147,7 +142,7 @@
               type="text"
               id="search"
               onkeyup="filterAll()"
-              placeholder="Filtrar por palabra o tema..."
+              placeholder="Buscar término..."
               class="bg-slate-900 border border-slate-700 rounded-2xl pl-12 pr-5 py-3.5 w-full focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-inner"
             />
           </div>
@@ -155,101 +150,103 @@
         <div id="full-list" class="space-y-6"></div>
       </section>
 
-      <section id="view-themes" class="hidden">
-        <div class="text-center mb-10">
-          <h2 class="text-3xl font-black text-white uppercase tracking-tighter">
-            Explorar por Especialidad
-          </h2>
-          <p class="text-slate-500">
-            Haz clic en una carpeta para ver sus preguntas
-          </p>
-        </div>
+      <section id="view-themes" class="hidden text-center">
+        <h2 class="text-3xl font-black text-white mb-10 uppercase italic">
+          Carpetas por Temario
+        </h2>
         <div
           id="theme-grid"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
         ></div>
-        <div id="theme-questions" class="space-y-6"></div>
+        <div id="theme-questions" class="space-y-6 text-left"></div>
       </section>
 
       <section id="view-sim" class="hidden max-w-3xl mx-auto text-center">
         <div
           id="sim-intro"
-          class="py-24 bg-slate-900 rounded-[3rem] border border-slate-800 shadow-2xl"
+          class="py-24 bg-slate-900 rounded-[3rem] border border-emerald-500/10 shadow-2xl"
         >
           <i
             class="fas fa-stopwatch text-6xl text-emerald-500 mb-8 animate-pulse"
           ></i>
-          <h2 class="text-4xl font-black text-white mb-4 italic">
-            Test de 20 Preguntas
+          <h2
+            class="text-4xl font-black text-white mb-4 italic text-center w-full"
+          >
+            Simulador de Examen
           </h2>
           <button
             onclick="startSim()"
-            class="bg-emerald-500 text-slate-950 font-black px-16 py-5 rounded-2xl shadow-lg hover:scale-105 transition-transform uppercase tracking-tighter"
+            class="bg-emerald-500 text-slate-950 font-black px-16 py-5 rounded-2xl shadow-lg"
           >
-            COMENZAR EXAMEN
+            COMENZAR TEST RANDOM
           </button>
         </div>
         <div id="sim-engine" class="hidden text-left">
           <div
             id="sim-num-display"
-            class="mb-4 text-emerald-500 font-black uppercase tracking-widest text-center text-sm"
+            class="mb-4 text-emerald-500 font-bold uppercase tracking-widest text-center"
           ></div>
           <div id="sim-question-container"></div>
-          <div class="flex justify-between mt-8 items-center">
+          <div class="flex justify-between mt-8">
             <button
               onclick="stopSim()"
-              class="text-slate-600 hover:text-red-500 font-bold uppercase text-xs"
+              class="text-slate-500 font-bold uppercase"
             >
-              Finalizar sesión
+              Abandonar
             </button>
             <button
               id="btn-next"
               onclick="nextSimQuestion()"
-              class="hidden bg-emerald-500 text-slate-950 px-10 py-3 rounded-xl font-bold flex items-center gap-2"
+              class="hidden bg-emerald-500 text-slate-950 px-10 py-3 rounded-xl font-bold"
             >
-              SIGUIENTE <i class="fas fa-chevron-right text-xs"></i>
+              SIGUIENTE
             </button>
           </div>
         </div>
         <div
           id="sim-results"
-          class="hidden py-16 bg-slate-900 rounded-[3rem] border border-emerald-500/20"
+          class="hidden text-center py-16 bg-slate-900 rounded-[3rem]"
         >
-          <h2 class="text-3xl font-black text-white mb-4">Examen Terminado</h2>
+          <h2
+            class="text-3xl font-black text-white mb-8 uppercase tracking-widest"
+          >
+            Fin del Examen
+          </h2>
           <div
             id="final-score"
-            class="text-7xl font-black text-emerald-500 mb-8"
+            class="text-6xl font-black text-emerald-500 mb-8"
           ></div>
           <button
             onclick="startSim()"
-            class="bg-emerald-500 text-slate-950 font-black px-10 py-4 rounded-2xl"
+            class="bg-emerald-500 text-slate-950 font-black px-10 py-4 rounded-xl"
           >
-            REINTENTAR
+            Reintentar
           </button>
         </div>
       </section>
 
       <section id="view-errors" class="hidden">
         <div
-          class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6 border-b border-orange-500/20 pb-8"
+          class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6 border-b border-red-500/20 pb-8"
         >
           <div>
-            <h2 class="text-4xl font-black text-white italic">
-              Errores de
-              <span id="user-error-name" class="text-orange-500"></span>
+            <h2
+              class="text-4xl font-black text-white italic underline decoration-orange-500"
+            >
+              Errores de <span id="error-user-name"></span>
             </h2>
-            <p class="text-slate-400 font-medium">
-              Preguntas guardadas automáticamente al fallar.
+            <p class="text-red-400 font-bold">
+              Aquí tienes tus preguntas pendientes para repaso.
             </p>
           </div>
           <button
             onclick="clearErrorHistory()"
-            class="bg-slate-800 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/30 px-6 py-3 rounded-xl transition-all text-xs font-black uppercase tracking-widest"
+            class="bg-red-600 hover:bg-red-500 text-white font-black px-6 py-3 rounded-xl transition-all text-xs uppercase tracking-widest"
           >
-            VACIAR ESTA LISTA
+            Borrar vuestros fallos
           </button>
         </div>
-        <div id="error-list" class="space-y-6 italic"></div>
+        <div id="error-list" class="space-y-6"></div>
       </section>
     </main>
 
@@ -7519,29 +7516,31 @@
         }
       ]
 
-      // 2. LÓGICA DE USUARIOS ARI & GEE
-      let currentUser = localStorage.getItem('fisioActiveUser') || 'ARI'
-      let errorFolder = []
+      // 2. LÓGICA DE USUARIOS Y ERRORES SEPARADOS
+      let currentUser = localStorage.getItem('fisioUserActive') || 'ARI'
+      let userErrors = []
 
       function loadUserData() {
-        errorFolder =
+        userErrors =
           JSON.parse(localStorage.getItem(`errors_${currentUser}`)) || []
-        document.getElementById('user-welcome').innerText =
-          `Estudiando como: ${currentUser}`
-        document.getElementById('user-error-name').innerText = currentUser
+        document.getElementById('welcome-text').innerText =
+          `Cuenta activa: ${currentUser}`
+        document.getElementById('error-user-name').innerText = currentUser
 
+        // Actualizar visualmente los botones de usuario
         document
-          .getElementById('user1-btn')
+          .getElementById('user-ari-btn')
           .classList.toggle('user-active', currentUser === 'ARI')
         document
-          .getElementById('user2-btn')
+          .getElementById('user-gee-btn')
           .classList.toggle('user-active', currentUser === 'GEE')
       }
 
-      function switchUser(userId) {
-        currentUser = userId
-        localStorage.setItem('fisioActiveUser', userId)
+      function switchUser(userName) {
+        currentUser = userName
+        localStorage.setItem('fisioUserActive', userName)
         loadUserData()
+        // Si estamos en la pestaña de errores, refrescar la lista al instante
         if (
           !document.getElementById('view-errors').classList.contains('hidden')
         )
@@ -7550,21 +7549,21 @@
           renderFullList()
       }
 
-      function saveError(id) {
-        if (!errorFolder.includes(id)) {
-          errorFolder.push(id)
+      function saveError(qId) {
+        if (!userErrors.includes(qId)) {
+          userErrors.push(qId)
           localStorage.setItem(
             `errors_${currentUser}`,
-            JSON.stringify(errorFolder)
+            JSON.stringify(userErrors)
           )
         }
       }
 
-      function removeFromErrors(id) {
-        errorFolder = errorFolder.filter((eId) => eId !== id)
+      function removeFromErrors(qId) {
+        userErrors = userErrors.filter((id) => id !== qId)
         localStorage.setItem(
           `errors_${currentUser}`,
-          JSON.stringify(errorFolder)
+          JSON.stringify(userErrors)
         )
         renderErrors()
       }
@@ -7573,10 +7572,10 @@
         if (
           confirm(`¿Seguro que quieres vaciar la carpeta de ${currentUser}?`)
         ) {
-          errorFolder = []
+          userErrors = []
           localStorage.setItem(
             `errors_${currentUser}`,
-            JSON.stringify(errorFolder)
+            JSON.stringify(userErrors)
           )
           renderErrors()
         }
@@ -7586,7 +7585,7 @@
       function createQuestionCard(q, isSim = false, isErrorView = false) {
         return `
           <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] space-y-6 shadow-xl card-zoom transition-all relative">
-            ${isErrorView ? `<button onclick="removeFromErrors(${q.id})" class="absolute top-6 right-6 text-orange-500 hover:text-white transition-colors text-[9px] font-black uppercase bg-orange-500/10 px-3 py-1 rounded-lg border border-orange-500/20">YA ME LA SÉ ✓</button>` : ''}
+            ${isErrorView ? `<button onclick="removeFromErrors(${q.id})" class="absolute top-6 right-6 text-orange-500 hover:text-white transition-colors text-[10px] font-black uppercase bg-orange-500/10 px-3 py-1 rounded-lg">Quitar de errores <i class="fas fa-check ml-1"></i></button>` : ''}
             <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
               <span class="bg-emerald-500/10 text-emerald-500 px-4 py-1.5 rounded-full border border-emerald-500/10">${q.theme}</span>
               <span class="text-slate-600 font-mono">ID #${q.id}</span>
@@ -7597,7 +7596,7 @@
                 .map(
                   (opt, i) => `
                 <button onclick="handleResponse(this, ${i}, ${q.id}, ${isSim})" 
-                  class="opt-btn text-left p-5 rounded-2xl bg-slate-800/40 border border-slate-700 hover:border-emerald-500/50 transition-all flex gap-4 group">
+                  class="opt-btn text-left p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 transition-all flex gap-4 group">
                   <span class="bg-slate-900 w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 font-black shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-900 transition-colors">${String.fromCharCode(65 + i)}</span>
                   <span class="text-sm font-medium leading-normal flex-1">${opt}</span>
                 </button>
@@ -7606,7 +7605,7 @@
                 .join('')}
             </div>
             <div class="explanation hidden bg-emerald-500/5 text-emerald-300 p-6 rounded-2xl border border-emerald-500/10 text-sm italic explanation-box flex gap-4">
-              <i class="fas fa-lightbulb text-emerald-400 mt-1"></i>
+              <i class="fas fa-lightbulb text-emerald-500 mt-1"></i>
               <div class="explanation-text"></div>
             </div>
           </div>`
@@ -7628,16 +7627,17 @@
         } else {
           btn.classList.add('incorrect')
           allBtns[qData.correct].classList.add('correct')
+          // GUARDAR FALLO EN LA CARPETA DEL USUARIO ACTUAL
           saveError(qId)
         }
 
-        explanationText.innerHTML = `<strong class="uppercase font-black text-emerald-500 mr-2">Razonamiento:</strong> ${qData.reason}`
+        explanationText.innerHTML = `<strong class="uppercase font-black text-emerald-500">Explicación:</strong> ${qData.reason}`
         explanationDiv.classList.remove('hidden')
         if (isSim)
           document.getElementById('btn-next').classList.remove('hidden')
       }
 
-      // 5. VISTAS Y TEMARIO (CON CONTADORES)
+      // 5. NAVEGACIÓN Y CARPETAS CON CONTADOR
       function showTab(tab) {
         document
           .querySelectorAll('section')
@@ -7654,23 +7654,21 @@
       }
 
       function renderThemeGrid() {
-        const themeCounts = {}
+        // Calcular cuántas preguntas hay por cada tema
+        const counts = {}
         database.forEach((q) => {
-          themeCounts[q.theme] = (themeCounts[q.theme] || 0) + 1
+          counts[q.theme] = (counts[q.theme] || 0) + 1
         })
-        const sortedThemes = Object.keys(themeCounts).sort()
 
-        document.getElementById('theme-grid').innerHTML = sortedThemes
+        const themes = Object.keys(counts).sort()
+        document.getElementById('theme-grid').innerHTML = themes
           .map(
             (t) => `
-          <button onclick="filterByTheme('${t}')" class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] hover:border-emerald-500/50 text-left transition-all group flex flex-col justify-between h-full shadow-lg">
-            <div>
-                <i class="fas fa-folder text-emerald-500/40 text-3xl mb-4 group-hover:text-emerald-500 transition-colors"></i>
-                <div class="font-black text-white uppercase tracking-tight text-lg leading-tight mb-2">${t}</div>
-            </div>
-            <div class="mt-4 inline-block bg-slate-950 px-4 py-1.5 rounded-full border border-slate-700">
-                <span class="text-emerald-500 font-black text-sm">${themeCounts[t]}</span> 
-                <span class="text-slate-500 font-bold text-[10px] uppercase ml-1">Preguntas</span>
+          <button onclick="filterByTheme('${t}')" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500 text-left transition-all group">
+            <i class="fas fa-folder text-emerald-500/50 group-hover:text-emerald-500 text-3xl mb-4 transition-colors"></i>
+            <div class="font-black text-white uppercase text-lg leading-tight mb-2">${t}</div>
+            <div class="bg-slate-950 px-3 py-1 rounded-full border border-slate-700 inline-block">
+                <span class="text-emerald-500 font-black">${counts[t]}</span> <span class="text-[10px] text-slate-500 font-bold uppercase">Preguntas</span>
             </div>
           </button>`
           )
@@ -7680,27 +7678,27 @@
       function filterByTheme(theme) {
         const filtered = database.filter((q) => q.theme === theme)
         document.getElementById('theme-questions').innerHTML = `
-            <div class="mb-6 flex items-center gap-4">
+            <div class="flex items-center gap-4 mb-6">
                 <h3 class="text-2xl font-black text-white uppercase italic">${theme}</h3>
                 <div class="h-px bg-slate-800 flex-1"></div>
             </div>
-            ${filtered.map((q) => createQuestionCard(q)).join('')}
-        `
-        window.scrollTo({ top: 500, behavior: 'smooth' })
+            ${filtered.map((q) => createQuestionCard(q)).join('')}`
+        window.scrollTo({ top: 400, behavior: 'smooth' })
       }
 
       function renderErrors() {
         const errorList = document.getElementById('error-list')
-        if (errorFolder.length === 0) {
-          errorList.innerHTML = `<div class="text-center py-20 text-slate-600 font-bold text-xl uppercase tracking-tighter">Sin fallos registrados para ${currentUser}</div>`
+        if (userErrors.length === 0) {
+          errorList.innerHTML = `<div class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800 italic text-slate-500">No hay errores en la cuenta de ${currentUser} todavía.</div>`
           return
         }
-        const filteredData = database.filter((q) => errorFolder.includes(q.id))
+        const filteredData = database.filter((q) => userErrors.includes(q.id))
         errorList.innerHTML = filteredData
           .map((q) => createQuestionCard(q, false, true))
           .join('')
       }
 
+      // 6. FUNCIONES DEL BANCO (REUTILIZADAS)
       function renderFullList() {
         document.getElementById('full-list').innerHTML = database
           .map((q) => createQuestionCard(q))
@@ -7719,11 +7717,10 @@
           .join('')
       }
 
-      // 6. SIMULADOR
+      // 7. LÓGICA SIMULADOR
       let simQuestions = []
       let currentSimIdx = 0
       let score = 0
-
       function startSim() {
         score = 0
         currentSimIdx = 0
@@ -7735,16 +7732,14 @@
         document.getElementById('sim-engine').classList.remove('hidden')
         updateSimView()
       }
-
       function updateSimView() {
         const q = simQuestions[currentSimIdx]
         document.getElementById('sim-num-display').innerText =
-          `PROGRESO: ${currentSimIdx + 1} / 20`
+          `PREGUNTA ${currentSimIdx + 1} DE 20`
         document.getElementById('sim-question-container').innerHTML =
           createQuestionCard(q, true)
         document.getElementById('btn-next').classList.add('hidden')
       }
-
       function nextSimQuestion() {
         currentSimIdx++
         if (currentSimIdx < 20) updateSimView()
@@ -7754,12 +7749,13 @@
           document.getElementById('final-score').innerText = `${score} / 20`
         }
       }
-
       function stopSim() {
         document.getElementById('sim-intro').classList.remove('hidden')
         document.getElementById('sim-engine').classList.add('hidden')
+        document.getElementById('sim-results').classList.add('hidden')
       }
 
+      // INICIO
       window.onload = () => {
         loadUserData()
         showTab('all')
